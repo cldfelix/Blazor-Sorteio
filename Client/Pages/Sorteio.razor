@@ -1,0 +1,72 @@
+﻿@page "/sorteio"
+@using global::Shared.Responses;
+@inject HttpClient Http
+
+<PageTitle>Sorteio</PageTitle>
+@if (sorteados == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row g-0">
+            <div class="col-md-12 text-center align-self-center">
+                <h5>Sorteio de Habitação</h5>
+                <h1>Ganhadores do Sorteio</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container text-center informacao">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Parabéns aos Ganhadores</h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container text-center  informacao">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-uppercase">Ganhador Lista <strong><span style="text-decoration: underline;">Idoso</span></strong></h1>
+                <h1 class="text-primary"><strong>@sorteados.Idoso?.Cpf&nbsp; - @sorteados.Idoso?.Nome</strong></h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container text-center informacao">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-uppercase">Ganhador lista <strong><span style="text-decoration: underline;">Deficiente Físico</span></strong></h1>
+                 <h1 class="text-primary"><strong>@sorteados.Deficiente?.Cpf&nbsp; - @sorteados.Deficiente?.Nome</strong></h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container text-center  informacao">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-uppercase">Ganhadores Lista <strong><span style="text-decoration: underline;">Geral</span></strong></h1>
+                @foreach (var sorteado in sorteados.Geral)
+                {
+                    <h1 class="text-primary"><strong>@sorteado?.Cpf&nbsp; - @sorteado?.Nome</strong></h1>
+                }
+            </div>
+        </div>
+    </div> 
+}
+ 
+
+
+@code{
+
+    private ResponseSorteiosResult? sorteados;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sorteados = await Http.GetFromJsonAsync<ResponseSorteiosResult>("api/sortear");
+    }
+    
+
+}

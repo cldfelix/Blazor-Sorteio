@@ -1,0 +1,91 @@
+﻿@page "/"
+@using global::Shared.Models
+@using global::Shared.Responses
+@inject HttpClient Http
+@inject NavigationManager _navigationManager;
+
+<PageTitle>Index</PageTitle>
+@if (_concorrentes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container text-center">
+        <div class="row">
+            <div class="col topo">
+                <h4>Sorteio de Habitação</h4>
+                <h1>Listas dos Participantes do Sorteio</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container informacoes">
+        <div class="row">
+            <div class="col-md-4 align-self-center">
+                <h3>Total de Participantes: <b>@_concorrentes.Total</b></h3>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-center align-self-center">
+                <button class="btn btn-primary btn-lg font-monospace text-center" type="button" @onclick="NavegarSorteio">Realizar Sorteio</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header fs-2">
+                <ul class="nav nav-tabs nav-fill card-header-tabs text-center">
+                    <li class="nav-item">
+                        <a class="nav-link @GetAtivo(1)" @onclick="()=> MostrarTipos(1)">Idosos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @GetAtivo(2)" @onclick="()=> MostrarTipos(2)">Deficientes Físicos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @GetAtivo(3)" @onclick="()=> MostrarTipos(3)">Geral</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body tab-pane active">
+                    @foreach (var c in _concorrentesMostrando)
+                    {
+                        <p class="card-text">@c?.Cpf - @c?.Nome</p>
+                    }
+            </div>
+        </div>
+    </div>
+}
+
+@code{
+    
+    private ResponseConcorrentesResult? _concorrentes;
+    private List<ConcorrentesResult>? _concorrentesMostrando;
+    private int _quemEstaAtivo = 1;
+   
+    
+    protected override async Task OnInitializedAsync()
+    {
+
+        _concorrentes = await Http.GetFromJsonAsync<ResponseConcorrentesResult>("api/participantes");
+        MostrarTipos(1);
+    }
+    
+    private void MostrarTipos(int tipo)
+    {
+        _quemEstaAtivo = tipo;
+        _concorrentesMostrando = tipo switch
+        {
+            1 => _concorrentes?.Idosos,
+            2 => _concorrentes?.Deficientes,
+            3 => _concorrentes?.Geral,
+            _ => _concorrentesMostrando
+            };
+        StateHasChanged();
+    }
+
+    private string GetAtivo(int item)=> _quemEstaAtivo == item ? "active" : string.Empty;
+
+    private void NavegarSorteio() => _navigationManager.NavigateTo("sorteio");
+    
+
+}
