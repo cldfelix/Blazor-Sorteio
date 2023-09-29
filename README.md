@@ -35,7 +35,3 @@ Agora que o ambiente está configurado, você pode executar o projeto Blazor Ser
 
 O aplicativo será executado e estará acessível em https://localhost:5001 no seu navegador.
 
-
-## Contato
-Se você tiver alguma dúvida ou precisar de ajuda, sinta-se à vontade para entrar em contato com seu-email@example.com.
-
